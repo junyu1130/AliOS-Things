@@ -155,17 +155,16 @@ static void demo_dm_recv_handler(void *dm_handle, const aiot_dm_recv_t *recv, vo
         /* 异步服务调用 */
         case AIOT_DMRECV_ASYNC_SERVICE_INVOKE: {
             printf("msg_id = %ld, service_id = %s, params = %.*s\r\n",
-                   (unsigned long)recv->data.async_service_invoke.msg_id,
-                   recv->data.async_service_invoke.service_id,
-                   recv->data.async_service_invoke.params_len,
-                   recv->data.async_service_invoke.params);
+                    (unsigned long)recv->data.async_service_invoke.msg_id,
+                    recv->data.async_service_invoke.service_id,
+                    recv->data.async_service_invoke.params_len,
+                    recv->data.async_service_invoke.params);
 
             /* TODO: 以下代码演示如何对来自云平台的异步服务调用进行应答, 用户可取消注释查看演示效果
-             *
-             * 注意: 如果用户在回调函数外进行应答, 需要自行保存msg_id, 因为回调函数入参在退出回调函数后将被SDK销毁, 不可以再访问到
-             */
+                *
+                * 注意: 如果用户在回调函数外进行应答, 需要自行保存msg_id, 因为回调函数入参在退出回调函数后将被SDK销毁, 不可以再访问到
+                */
 
-            /*
             {
                 aiot_dm_msg_t msg;
 
@@ -180,7 +179,6 @@ static void demo_dm_recv_handler(void *dm_handle, const aiot_dm_recv_t *recv, vo
                     printf("aiot_dm_send failed\r\n");
                 }
             }
-            */
         }
         break;
 
@@ -397,8 +395,11 @@ int demo_main(int argc, char *argv[])
         count++;
         snprintf(msg, 20, "{\"prop1\": %d}", count);
         demo_send_property_post(dm_handle, msg);
-        // demo_send_event_post(dm_handle, "Error", "{\"ErrorCode\": 0}");
-
+        if (count >= 10)
+        {
+            demo_send_event_post(dm_handle, "event1", "{\"ErrorCode\": 0}");
+            count = 0;
+        }
         aos_msleep(10000);
     }
 
